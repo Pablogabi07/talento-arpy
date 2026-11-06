@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Talento ArPy</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+rel="icon"
+type="image/svg+xml"
+href="favicon.svg">
+
+<link
+    rel="icon"
+    type="image/svg+xml"
+    href="/assets/favicon.svg.png">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link
+        rel="stylesheet"
+        href="style.css">
+
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+
+<nav class="navbar">
+
+    <div class="logo">
+
+    <img
+        src="/assets/favicon.svg.png"
+        alt="Talento ArPy"
+        class="logo-image"
+    >
+
+    <span class="logo-text">
+        Talento ArPy
+    </span>
+
+</div>
+
+
+    <button id="menuToggle" class="menu-toggle">
+        ☰
+    </button>
+
+    <ul class="nav-links" id="navLinks">
+
+        <li>
+            <button
+                class="nav-btn"
+                data-section="inicio">
+                Inicio
+            </button>
+        </li>
+
+        <li>
+            <button
+                class="nav-btn"
+                data-section="perfil">
+                Sumar mi Perfil
+            </button>
+        </li>
+
+        <li>
+            <button
+                class="nav-btn"
+                data-section="talentos">
+                Talentos
+            </button>
+        </li>
+
+        <li>
+            <button id="themeBtn">
+                🌙
+            </button>
+        </li>
+
+    </ul>
+
+</nav>
+
+<!-- INICIO -->
+
+<section
+    id="inicio"
+    class="page active-page">
+
+    <header>
+
+        <div class="hero-content">
+
+            <span class="hero-badge">
+                Comunidad de talento
+            </span>
+
+            <h1>
+                Descubre personas,
+                conecta oportunidades,
+                crea futuro.
+            </h1>
+
+            <p class="hero-subtitle">
+
+                Un espacio donde profesionales pueden
+                mostrar su experiencia y las empresas
+                encontrar talento de forma simple.
+
+            </p>
+
+            <div class="hero-stats">
+
+                <!-- TALENTOS -->
+
+                <div class="hero-stat">
+
+                    <span id="talentCountHeader">
+                        0
+                    </span>
+
+                    <small>
+                        Talentos
+                    </small>
+
+                </div>
+
+                <!-- AREAS -->
+
+                <div class="hero-stat">
+
+                    <span id="areasCount">
+                        0
+                    </span>
+
+                    <small>
+                        Áreas
+                    </small>
+
+                </div>
+
+                <!-- OPORTUNIDADES -->
+
+                <div class="hero-stat">
+
+                    <span id="opportunitiesCount">
+                        0
+                    </span>
+
+                    <small>
+                        Oportunidades
+                    </small>
+
+                </div>
+
+            </div>
+
+            <div class="hero-buttons">
+
+                <button
+                    class="hero-btn nav-btn"
+                    data-section="perfil">
+
+                    Sumar mi Perfil
+
+                </button>
+
+                <button
+                    class="hero-btn secondary nav-btn"
+                    data-section="talentos">
+
+                    Explorar Talentos
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </header>
+
+</section>
+
+    <!-- FORMULARIO -->
+
+    <section
+        id="perfil"
+        class="page">
+
+        <main>
+
+            <section class="form-section">
+
+                <h2>
+                    Sumar mi Perfil
+                </h2>
+
+                <p class="section-description">
+
+                    Comparte tu experiencia y ayuda a que
+                    nuevas oportunidades profesionales
+                    te encuentren.
+
+                </p>
+
+                <form id="profileForm">
+
+                    <input
+                        type="text"
+                        id="name"
+                        placeholder="Nombre y Apellido"
+                        required>
+
+                    <select
+                        id="country"
+                        required>
+
+                        <option value="">
+                            Selecciona un país
+                        </option>
+
+                        <option value="Argentina">
+                            Argentina
+                        </option>
+
+                        <option value="Paraguay">
+                            Paraguay
+                        </option>
+
+                        <option value="Uruguay">
+                            Uruguay
+                        </option>
+
+                        <option value="Chile">
+                            Chile
+                        </option>
+
+                        <option value="Brasil">
+                            Brasil
+                        </option>
+
+                        <option value="Otro">
+                            Otro
+                        </option>
+
+                    </select>
+
+                    <select
+                        id="area"
+                        required>
+
+                        <option value="">
+                            Selecciona un área
+                        </option>
+
+                        <option value="IT">
+                            IT
+                        </option>
+
+                        <option value="QA">
+                            QA
+                        </option>
+
+                        <option value="Producto">
+                            Producto
+                        </option>
+
+                        <option value="Soporte">
+                            Soporte
+                        </option>
+
+                        <option value="RRHH">
+                            RRHH
+                        </option>
+
+                        <option value="Marketing">
+                            Marketing
+                        </option>
+
+                        <option value="Operaciones">
+                            Operaciones
+                        </option>
+
+                        <option value="Comercial">
+                            Comercial
+                        </option>
+
+                        <option value="Finanzas">
+                            Finanzas
+                        </option>
+
+                    </select>
+
+                    <input
+                        type="text"
+                        id="position"
+                        placeholder="Puesto"
+                        required>
+
+                    <input
+                        type="text"
+                        id="location"
+                        placeholder="Ciudad"
+                        required>
+
+                    <input
+                        type="number"
+                        id="experience"
+                        placeholder="Años de experiencia"
+                        required>
+
+                    <input
+                        type="text"
+                        id="linkedin"
+                        placeholder="linkedin.com/in/tu-perfil"
+                        required>
+
+                    <textarea
+                        id="summary"
+                        rows="5"
+                        placeholder="Resumen profesional"
+                        required></textarea>
+
+                    <input
+                        type="text"
+                        id="skills"
+                        placeholder="Skills separadas por coma"
+                        required>
+
+                    <button
+                        type="submit">
+
+                        Publicar Perfil
+
+                    </button>
+
+                </form>
+
+            </section>
+
+        </main>
+
+    </section>
+
+    <!-- TALENTOS -->
+
+    <section
+        id="talentos"
+        class="page">
+
+        <main>
+
+            <section class="search-section">
+
+                <h2>
+                    Explorar Talentos
+                </h2>
+
+                <div class="talent-counter">
+
+                    👥 Talentos registrados:
+                    <span id="talentCount">
+                        0
+                    </span>
+
+                </div>
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Buscar por nombre, puesto o skill...">
+
+                <div class="filters">
+
+                    <select id="areaFilter">
+
+                        <option value="all">
+                            Todas las áreas
+                        </option>
+
+                        <option value="IT">
+                            IT
+                        </option>
+
+                        <option value="QA">
+                            QA
+                        </option>
+
+                        <option value="Producto">
+                            Producto
+                        </option>
+
+                        <option value="Soporte">
+                            Soporte
+                        </option>
+
+                        <option value="RRHH">
+                            RRHH
+                        </option>
+
+                        <option value="Marketing">
+                            Marketing
+                        </option>
+
+                        <option value="Operaciones">
+                            Operaciones
+                        </option>
+
+                    </select>
+
+                    <select id="countryFilter">
+
+                        <option value="all">
+                            Todos los países
+                        </option>
+
+                        <option value="Argentina">
+                            Argentina
+                        </option>
+
+                        <option value="Paraguay">
+                            Paraguay
+                        </option>
+
+                        <option value="Uruguay">
+                            Uruguay
+                        </option>
+
+                        <option value="Chile">
+                            Chile
+                        </option>
+
+                        <option value="Brasil">
+                            Brasil
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </section>
+
+            <section
+                id="profilesContainer"
+                class="profiles-grid">
+
+            </section>
+
+        </main>
+
+    </section>
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        <h3>
+            Talento ArPy
+        </h3>
+
+        <p>
+            Una comunidad para conectar talento con oportunidades.
+        </p>
+
+        <p class="footer-copy">
+            © 2026 Talento ArPy
+        </p>
+
+    </footer>
+
+    <script
+        type="module"
+        src="app.js">
+    </script>
+
+</body>
+
+</html>
