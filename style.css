@@ -184,6 +184,34 @@ body {
   cursor: pointer;
 }
 
+.remove-profile-btn{
+
+    width:100%;
+
+    margin-top:10px;
+
+    border:none;
+
+    cursor:pointer;
+
+    padding:10px;
+
+    border-radius:12px;
+
+    background:
+    #10b981;
+
+    color:white;
+
+    font-weight:600;
+}
+
+.remove-profile-btn:hover{
+
+    background:
+    #059669;
+}
+
 /* ==========================
    HERO
 ========================== */
@@ -505,12 +533,14 @@ button[type="submit"] {
 
 .profiles-grid {
 
-  display: grid;
+    display: grid;
 
-  grid-template-columns:
-    repeat(auto-fit,minmax(350px,1fr));
+    grid-template-columns:
+        repeat(auto-fit, minmax(280px, 320px));
 
-  gap: 25px;
+    justify-content: center;
+
+    gap: 18px;
 }
 
 /* ==========================
@@ -519,15 +549,26 @@ button[type="submit"] {
 
 .profile-card {
 
-  background: white;
+    width: 100%;
 
-  border-radius: 28px;
+    max-width: 320px;
 
-  padding: 30px;
+    margin: 0 auto;
 
-  box-shadow: var(--shadow);
+    padding: 20px;
 
-  transition: .35s;
+    overflow: visible;
+
+    box-sizing: border-box;
+
+}
+
+
+.profile-card h3 {
+
+  font-size: 1.2rem;
+
+  margin-bottom: 4px;
 }
 
 .profile-card:hover {
@@ -547,18 +588,18 @@ button[type="submit"] {
 
   align-items: center;
 
-  gap: 15px;
+  gap: 10px;
 
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 
 .avatar {
 
-  width: 80px;
+  width: 50px;
 
-  height: 80px;
+  height: 50px;
 
-  border-radius: 24px;
+  border-radius: 16px;
 
   background:
     linear-gradient(
@@ -575,7 +616,8 @@ button[type="submit"] {
 
   color: white;
 
-  font-size: 30px;
+    font-size: 20px;
+
 
   font-weight: 700;
 }
@@ -600,7 +642,11 @@ button[type="submit"] {
 
 .profile-card p {
 
-  margin-bottom: 10px;
+    margin-bottom: 6px;
+
+    font-size: 14px;
+
+    line-height: 1.4;
 }
 
 /* ==========================
@@ -616,9 +662,9 @@ button[type="submit"] {
 
   display: inline-block;
 
-  margin: 5px;
+  margin: 3px;
 
-  padding: 8px 14px;
+  padding: 5px 10px;
 
   border-radius: 999px;
 
@@ -635,7 +681,8 @@ button[type="submit"] {
       .15
     );
 
-  font-size: .85rem;
+     font-size: 12px;
+
 
   font-weight: 600;
 }
@@ -648,13 +695,19 @@ button[type="submit"] {
 
   display: inline-block;
 
-  margin-top: 20px;
+  margin-top: 12px;
+
+  width: 100%;
+
+  text-align: center;
 
   text-decoration: none;
 
-  padding: 12px 20px;
+  padding: 10;
 
-  border-radius: 14px;
+  font-size: 14px;
+
+  border-radius: 12px;
 
   color: white;
 
@@ -1233,10 +1286,10 @@ body.dark footer {
 
     .avatar {
 
-        width:65px;
-        height:65px;
+        width: 60px;
+  height: 60px;
 
-        font-size:24px;
+  font-size: 24px;
     }
 
 }
@@ -1253,4 +1306,42 @@ body.dark footer {
         font-size:1.4rem;
     }
 
+}
+
+.auth-section{
+
+    display:flex;
+
+    gap:10px;
+
+    align-items:center;
+}
+
+#loginBtn,
+#logoutBtn{
+
+    border:none;
+
+    cursor:pointer;
+
+    padding:10px 16px;
+
+    border-radius:12px;
+
+    font-weight:600;
+
+    color:white;
+
+    background:
+    linear-gradient(
+        135deg,
+        #7c3aed,
+        #ec4899
+    );
+}
+
+#loginBtn:hover,
+#logoutBtn:hover{
+
+    opacity:.9;
 }

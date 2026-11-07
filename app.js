@@ -2,12 +2,23 @@ import { initializeApp }
 from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 
 import {
+    getAuth,
+    GoogleAuthProvider,
+    signInWithPopup,
+    signOut,
+    onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+import {
     getFirestore,
     collection,
     addDoc,
     getDocs,
     query,
-    orderBy
+    orderBy,
+    deleteDoc,
+    doc
 }
 from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
@@ -37,6 +48,99 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
+
+const auth = getAuth(app);
+
+const provider =
+    new GoogleAuthProvider();
+
+let currentUser = null;
+
+//
+const loginBtn =
+    document.getElementById(
+        "loginBtn"
+    );
+
+const logoutBtn =
+    document.getElementById(
+        "logoutBtn"
+    );
+
+loginBtn.addEventListener(
+    "click",
+    async () => {
+
+        try{
+
+            await signInWithPopup(
+                auth,
+                provider
+            );
+
+        }catch(error){
+
+            console.error(error);
+
+        }
+
+    }
+);
+
+onAuthStateChanged(
+    auth,
+    (user) => {
+
+        if(user){
+
+            currentUser = user;
+
+            loginBtn.style.display =
+                "none";
+
+            logoutBtn.style.display =
+                "inline-block";
+
+            console.log(
+                "Usuario logueado:",
+                user.email
+            );
+
+        }else{
+
+            currentUser = null;
+
+            loginBtn.style.display =
+                "inline-block";
+
+            logoutBtn.style.display =
+                "none";
+
+        }
+
+        loadProfiles();
+
+    }
+);
+
+logoutBtn.addEventListener(
+    "click",
+    async () => {
+
+        try {
+
+            await signOut(auth);
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
+);
+//
+
 
 
 // ====================================
@@ -92,39 +196,61 @@ profileForm.addEventListener(
 
             }
 
-            const newProfile = {
+if (!currentUser) {
 
-                name:
-                    document.getElementById("name").value,
+    alert(
+        "Debes iniciar sesión con Google para publicar un perfil."
+    );
 
-                country:
-                    document.getElementById("country").value,
+    return;
 
-                area:
-                    document.getElementById("area").value,
+}
 
-                position:
-                    document.getElementById("position").value,
+const newProfile = {
 
-                location:
-                    document.getElementById("location").value,
+    uid:
+        currentUser.uid,
 
-                experience:
-                    document.getElementById("experience").value,
+    email:
+        currentUser.email,
 
-                linkedin:
-                    linkedin,
+    ownerName:
+        currentUser.displayName,
 
-                summary:
-                    document.getElementById("summary").value,
+    name:
+        document.getElementById("name").value,
 
-                skills:
-                    document.getElementById("skills").value,
+    country:
+        document.getElementById("country").value,
 
-                createdAt:
-                    new Date()
+    area:
+        document.getElementById("area").value,
 
-            };
+    position:
+        document.getElementById("position").value,
+
+    location:
+        document.getElementById("location").value,
+
+    experience:
+        document.getElementById("experience").value,
+
+    linkedin:
+        linkedin,
+
+    summary:
+        document.getElementById("summary").value,
+
+    skills:
+        document.getElementById("skills").value,
+
+    active:
+        true,
+
+    createdAt:
+        new Date()
+
+};
 
             await addDoc(
 
@@ -188,13 +314,19 @@ async function loadProfiles() {
 
         snapshot.forEach(doc => {
 
-            allProfiles.push({
+const profile = {
 
-                id: doc.id,
+    id: doc.id,
 
-                ...doc.data()
+    ...doc.data()
 
-            });
+};
+
+if(profile.active !== false){
+
+    allProfiles.push(profile);
+
+}
 
         });
 
@@ -291,6 +423,18 @@ function renderProfiles(profiles){
 
     profiles.forEach(profile => {
 
+        const isOwner =
+
+    currentUser
+
+    &&
+
+    profile.uid
+
+    &&
+
+    profile.uid === currentUser.uid;
+
         let skillsHTML = "";
 
         if(profile.skills){
@@ -365,7 +509,10 @@ function renderProfiles(profiles){
 
             <p>
 
-                ${profile.summary || ""}
+                ${profile.summary
+    ? profile.summary.substring(0, 90) + "..."
+    : ""
+}
 
             </p>
 
@@ -389,7 +536,21 @@ function renderProfiles(profiles){
 
                 Ver LinkedIn
 
+                
             </a>
+
+            ${isOwner ? `
+
+<button
+    class="remove-profile-btn"
+    onclick="removeProfile('${profile.id}')"
+>
+
+    ✅ Conseguí trabajo
+
+</button>
+
+` : ""}
 
         </div>
         `;
@@ -649,5 +810,50 @@ document
 // ====================================
 // INICIO
 // ====================================
+
+window.removeProfile =
+async function(profileId){
+
+    const confirmDelete = confirm(
+
+        "¿Deseas ocultar tu perfil porque ya conseguiste trabajo?"
+
+    );
+
+    if(!confirmDelete){
+
+        return;
+
+    }
+
+    try{
+
+        await deleteDoc(
+
+            doc(
+                db,
+                "profiles",
+                profileId
+            )
+
+        );
+
+        loadProfiles();
+
+        alert(
+            "Perfil eliminado correctamente"
+        );
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "Error al eliminar perfil"
+        );
+
+    }
+
+}
 
 loadProfiles();
