@@ -987,7 +987,7 @@ body.dark textarea {
 .hero-content h1 {
 
     font-size: clamp(
-        2.8rem,
+    1.8rem,
         6vw,
         5rem
     );
@@ -1344,51 +1344,46 @@ body.dark footer {
     opacity:.9;
 }
 
-@media (max-width: 768px) {
+@media (max-width:768px){
 
-    .navbar {
+    .navbar{
 
-        display: flex;
+        display:grid;
 
-        flex-direction: column;
+        grid-template-columns: 1fr auto;
 
-        align-items: stretch;
+        grid-template-areas:
+            "logo logo"
+            "auth menu";
 
-        gap: 12px;
+        gap:12px;
 
+        align-items:center;
     }
 
-    .logo {
+    .logo{
 
-        display: flex;
+        grid-area:logo;
 
-        align-items: center;
-
-        justify-content: center;
-
+        justify-content:center;
     }
 
-    .auth-section {
+    .auth-section{
 
-        display: flex;
+        grid-area:auth;
 
-        justify-content: center;
-
+        justify-self:start;
     }
 
-    #loginBtn,
-    #logoutBtn {
+    .menu-toggle{
 
-        width: 220px;
+        grid-area:menu;
 
-        max-width: 100%;
+        justify-self:end;
+
+        margin:0;
     }
 
-    .menu-toggle {
-
-        align-self: flex-start;
-
-    }
 }
 
 #loginBtn,
