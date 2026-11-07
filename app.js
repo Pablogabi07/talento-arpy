@@ -534,7 +534,7 @@ function renderProfiles(profiles){
 
             >
 
-                Ver LinkedIn
+                🔗 LinkedIn
 
                 
             </a>
@@ -551,6 +551,7 @@ function renderProfiles(profiles){
 </button>
 
 ` : ""}
+
 
         </div>
         `;
@@ -814,10 +815,30 @@ document
 window.removeProfile =
 async function(profileId){
 
+    const profile =
+
+        allProfiles.find(
+            p => p.id === profileId
+        );
+
+    if(
+        !currentUser
+        ||
+        !profile
+        ||
+        profile.uid !== currentUser.uid
+    ){
+
+        alert(
+            "No tienes permisos para eliminar este perfil."
+        );
+
+        return;
+
+    }
+
     const confirmDelete = confirm(
-
         "¿Deseas ocultar tu perfil porque ya conseguiste trabajo?"
-
     );
 
     if(!confirmDelete){
@@ -838,10 +859,10 @@ async function(profileId){
 
         );
 
-        loadProfiles();
+        await loadProfiles();
 
         alert(
-            "Perfil eliminado correctamente"
+            "Perfil dado de baja correctamente."
         );
 
     }catch(error){
@@ -849,7 +870,7 @@ async function(profileId){
         console.error(error);
 
         alert(
-            "Error al eliminar perfil"
+            "Error al eliminar perfil."
         );
 
     }

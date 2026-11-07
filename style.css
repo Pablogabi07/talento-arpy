@@ -693,30 +693,28 @@ button[type="submit"] {
 
 .linkedin-btn {
 
-  display: inline-block;
+    display: table;
 
-  margin-top: 12px;
+    margin: 15px auto 0;
 
-  width: 100%;
+    padding: 10px 24px;
 
-  text-align: center;
+    text-decoration: none;
 
-  text-decoration: none;
+    color: white;
 
-  padding: 10;
+    font-weight: 600;
 
-  font-size: 14px;
+    border-radius: 999px;
 
-  border-radius: 12px;
+    background:
+        linear-gradient(
+            135deg,
+            var(--primary),
+            var(--secondary)
+        );
 
-  color: white;
-
-  background:
-    linear-gradient(
-      135deg,
-      var(--primary),
-      var(--secondary)
-    );
+    transition: .3s ease;
 }
 
 /* ==========================
@@ -1182,10 +1180,10 @@ body.dark textarea {
 .linkedin-btn:hover {
 
     transform:
-        translateY(-3px);
+        translateY(-2px);
 
     box-shadow:
-        0 10px 25px
+        0 8px 20px
         rgba(
             124,
             58,
@@ -1344,4 +1342,63 @@ body.dark footer {
 #logoutBtn:hover{
 
     opacity:.9;
+}
+
+@media (max-width: 768px) {
+
+    .navbar {
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        gap: 12px;
+
+    }
+
+    .logo {
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+    }
+
+    .auth-section {
+
+        display: flex;
+
+        justify-content: center;
+
+    }
+
+    #loginBtn,
+    #logoutBtn {
+
+        width: 220px;
+
+        max-width: 100%;
+    }
+
+    .menu-toggle {
+
+        align-self: flex-start;
+
+    }
+}
+
+#loginBtn,
+#logoutBtn {
+
+    white-space: nowrap;
+
+    font-size: 13px;
+
+    padding: 8px 14px;
+
+    border-radius: 10px;
 }
