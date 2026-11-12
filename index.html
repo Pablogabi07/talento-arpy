@@ -4,6 +4,7 @@
 <head>
 
     <!-- Google Analytics -->
+
     <script
         async
         src="https://www.googletagmanager.com/gtag/js?id=G-0DCZ2TL5N4">
@@ -58,9 +59,9 @@
 
 <body>
 
-    <!-- =========================
+    <!-- =================================
          NAVBAR
-    ========================== -->
+    ================================== -->
 
     <nav class="navbar">
 
@@ -119,11 +120,6 @@
 
             </li>
 
-            <!--
-                Solo se muestra cuando el usuario
-                inició sesión y todavía no creó un perfil.
-            -->
-
             <li
                 id="menuCrearPerfil"
                 hidden>
@@ -136,11 +132,6 @@
                 </button>
 
             </li>
-
-            <!--
-                Solo se muestra cuando el usuario
-                inició sesión y ya tiene un perfil.
-            -->
 
             <li
                 id="menuMiPerfil"
@@ -181,9 +172,10 @@
 
     </nav>
 
-    <!-- =========================
+
+    <!-- =================================
          INICIO
-    ========================== -->
+    ================================== -->
 
     <section
         id="inicio"
@@ -251,11 +243,6 @@
 
                 <div class="hero-buttons">
 
-                    <!--
-                        Se muestra al usuario autenticado
-                        que todavía no tiene perfil.
-                    -->
-
                     <button
                         type="button"
                         id="heroCrearPerfil"
@@ -264,11 +251,6 @@
                         hidden>
                         Sumar mi perfil
                     </button>
-
-                    <!--
-                        Se muestra al usuario autenticado
-                        que ya tiene perfil.
-                    -->
 
                     <button
                         type="button"
@@ -294,9 +276,10 @@
 
     </section>
 
-    <!-- =========================
-         CREAR / EDITAR PERFIL
-    ========================== -->
+
+    <!-- =================================
+         CREAR O EDITAR PERFIL
+    ================================== -->
 
     <section
         id="perfil"
@@ -326,7 +309,9 @@
                         id="name"
                         placeholder="Nombre y apellido"
                         autocomplete="name"
+                        maxlength="100"
                         required>
+
 
                     <label for="country">
                         País
@@ -365,6 +350,7 @@
                         </option>
 
                     </select>
+
 
                     <label for="area">
                         Área profesional
@@ -416,6 +402,7 @@
 
                     </select>
 
+
                     <label for="status">
                         Estado laboral
                     </label>
@@ -438,6 +425,50 @@
 
                     </select>
 
+
+                    <label for="seniority">
+                        Seniority
+                    </label>
+
+                    <select
+                        id="seniority"
+                        required>
+
+                        <option value="">
+                            Selecciona tu seniority
+                        </option>
+
+                        <option value="Trainee">
+                            Trainee
+                        </option>
+
+                        <option value="Junior">
+                            Junior
+                        </option>
+
+                        <option value="Semi Senior">
+                            Semi Senior
+                        </option>
+
+                        <option value="Senior">
+                            Senior
+                        </option>
+
+                        <option value="Lead">
+                            Lead
+                        </option>
+
+                        <option value="Manager">
+                            Manager
+                        </option>
+
+                        <option value="No aplica">
+                            No aplica
+                        </option>
+
+                    </select>
+
+
                     <label for="position">
                         Puesto
                     </label>
@@ -447,7 +478,9 @@
                         id="position"
                         placeholder="Por ejemplo: Analista funcional"
                         autocomplete="organization-title"
+                        maxlength="120"
                         required>
+
 
                     <label for="location">
                         Ciudad o ubicación
@@ -458,7 +491,9 @@
                         id="location"
                         placeholder="Ciudad o ubicación"
                         autocomplete="address-level2"
+                        maxlength="120"
                         required>
+
 
                     <label for="experience">
                         Años de experiencia
@@ -470,7 +505,9 @@
                         placeholder="Años de experiencia"
                         min="0"
                         max="80"
+                        step="1"
                         required>
+
 
                     <label for="linkedin">
                         Perfil de LinkedIn
@@ -481,7 +518,9 @@
                         id="linkedin"
                         placeholder="linkedin.com/in/tu-perfil"
                         inputmode="url"
+                        maxlength="300"
                         required>
+
 
                     <label for="summary">
                         Resumen profesional
@@ -494,6 +533,7 @@
                         placeholder="Cuenta brevemente tu experiencia profesional"
                         required></textarea>
 
+
                     <label for="skills">
                         Habilidades
                     </label>
@@ -502,6 +542,7 @@
                         type="text"
                         id="skills"
                         placeholder="Skills separadas por coma"
+                        maxlength="500"
                         required>
 
                     <div class="form-actions">
@@ -530,9 +571,10 @@
 
     </section>
 
-    <!-- =========================
+
+    <!-- =================================
          MI PERFIL
-    ========================== -->
+    ================================== -->
 
     <section
         id="miPerfil"
@@ -579,9 +621,10 @@
 
     </section>
 
-    <!-- =========================
-         TALENTOS
-    ========================== -->
+
+    <!-- =================================
+         TALENTOS Y FILTROS AVANZADOS
+    ================================== -->
 
     <section
         id="talentos"
@@ -591,39 +634,86 @@
 
             <section class="search-section">
 
-                <h2>
-                    Explorar talentos
-                </h2>
+                <div class="search-header">
 
-                <div class="talent-counter">
+                    <div>
 
-                    👥 Talentos registrados:
+                        <span class="section-kicker">
+                            Explora la comunidad
+                        </span>
 
-                    <span id="talentCount">
-                        0
-                    </span>
+                        <h2>
+                            Buscar talentos
+                        </h2>
+
+                        <p class="section-description">
+                            Utiliza los filtros para encontrar perfiles
+                            por experiencia, seniority, país,
+                            disponibilidad o habilidades.
+                        </p>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        id="clearFiltersBtn"
+                        class="clear-filters-btn">
+                        Limpiar filtros
+                    </button>
 
                 </div>
 
-                <label
-                    for="searchInput"
-                    class="visually-hidden">
-                    Buscar talentos
-                </label>
 
-                <input
-                    type="search"
-                    id="searchInput"
-                    placeholder="Buscar por nombre, puesto o skill...">
+                <div class="results-summary">
 
-                <div class="filters">
+                    <div class="talent-counter">
+
+                        👥 Perfiles encontrados:
+
+                        <span id="filteredTalentCount">
+                            0
+                        </span>
+
+                    </div>
+
+                    <div class="total-counter">
+
+                        Total registrados:
+
+                        <span id="talentCount">
+                            0
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="search-box">
+
+                    <label
+                        for="searchInput"
+                        class="visually-hidden">
+                        Buscar talentos
+                    </label>
+
+                    <input
+                        type="search"
+                        id="searchInput"
+                        placeholder="Buscar por nombre, puesto, ubicación o skill..."
+                        autocomplete="off">
+
+                </div>
+
+
+                <div class="advanced-filters">
+
+                    <!-- ÁREA -->
 
                     <div class="filter-field">
 
-                        <label
-                            for="areaFilter"
-                            class="visually-hidden">
-                            Filtrar por área
+                        <label for="areaFilter">
+                            Área
                         </label>
 
                         <select id="areaFilter">
@@ -672,12 +762,13 @@
 
                     </div>
 
+
+                    <!-- PAÍS -->
+
                     <div class="filter-field">
 
-                        <label
-                            for="countryFilter"
-                            class="visually-hidden">
-                            Filtrar por país
+                        <label for="countryFilter">
+                            País
                         </label>
 
                         <select id="countryFilter">
@@ -714,9 +805,165 @@
 
                     </div>
 
+
+                    <!-- ESTADO LABORAL -->
+
+                    <div class="filter-field">
+
+                        <label for="statusFilter">
+                            Estado laboral
+                        </label>
+
+                        <select id="statusFilter">
+
+                            <option value="all">
+                                Todos los estados
+                            </option>
+
+                            <option value="Disponible">
+                                🟢 Disponible
+                            </option>
+
+                            <option value="Escuchando propuestas">
+                                🟡 Escuchando propuestas
+                            </option>
+
+                            <option value="No disponible">
+                                🔴 No disponible
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- EXPERIENCIA -->
+
+                    <div class="filter-field">
+
+                        <label for="experienceFilter">
+                            Experiencia
+                        </label>
+
+                        <select id="experienceFilter">
+
+                            <option value="all">
+                                Cualquier experiencia
+                            </option>
+
+                            <option value="0-2">
+                                0 a 2 años
+                            </option>
+
+                            <option value="3-5">
+                                3 a 5 años
+                            </option>
+
+                            <option value="6-10">
+                                6 a 10 años
+                            </option>
+
+                            <option value="11+">
+                                Más de 10 años
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- SENIORITY -->
+
+                    <div class="filter-field">
+
+                        <label for="seniorityFilter">
+                            Seniority
+                        </label>
+
+                        <select id="seniorityFilter">
+
+                            <option value="all">
+                                Todos los niveles
+                            </option>
+
+                            <option value="Trainee">
+                                Trainee
+                            </option>
+
+                            <option value="Junior">
+                                Junior
+                            </option>
+
+                            <option value="Semi Senior">
+                                Semi Senior
+                            </option>
+
+                            <option value="Senior">
+                                Senior
+                            </option>
+
+                            <option value="Lead">
+                                Lead
+                            </option>
+
+                            <option value="Manager">
+                                Manager
+                            </option>
+
+                            <option value="No aplica">
+                                No aplica
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- ORDEN -->
+
+                    <div class="filter-field">
+
+                        <label for="sortFilter">
+                            Ordenar por
+                        </label>
+
+                        <select id="sortFilter">
+
+                            <option value="recent">
+                                Más recientes
+                            </option>
+
+                            <option value="experience-desc">
+                                Más experiencia
+                            </option>
+
+                            <option value="experience-asc">
+                                Menos experiencia
+                            </option>
+
+                            <option value="name-asc">
+                                Nombre: A a Z
+                            </option>
+
+                            <option value="name-desc">
+                                Nombre: Z a A
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="activeFilters"
+                    class="active-filters"
+                    aria-live="polite">
                 </div>
 
             </section>
+
 
             <section
                 id="profilesContainer"
@@ -728,9 +975,10 @@
 
     </section>
 
-    <!-- =========================
+
+    <!-- =================================
          FOOTER
-    ========================== -->
+    ================================== -->
 
     <footer>
 
@@ -747,6 +995,7 @@
         </p>
 
     </footer>
+
 
     <script
         type="module"

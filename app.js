@@ -96,6 +96,27 @@ const areaFilter =
 const countryFilter =
     document.getElementById("countryFilter");
 
+const statusFilter =
+    document.getElementById("statusFilter");
+
+const experienceFilter =
+    document.getElementById("experienceFilter");
+
+const seniorityFilter =
+    document.getElementById("seniorityFilter");
+
+const sortFilter =
+    document.getElementById("sortFilter");
+
+const clearFiltersBtn =
+    document.getElementById("clearFiltersBtn");
+
+const filteredTalentCount =
+    document.getElementById("filteredTalentCount");
+
+const activeFilters =
+    document.getElementById("activeFilters");
+
 const talentCount =
     document.getElementById("talentCount");
 
@@ -147,14 +168,17 @@ function normalizeText(value) {
 
     return String(value ?? "")
         .trim()
-        .toLowerCase();
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
 
 }
 
 
 function normalizeLinkedInUrl(value) {
 
-    let linkedin = String(value ?? "").trim();
+    let linkedin =
+        String(value ?? "").trim();
 
     if (!linkedin) {
         return "";
@@ -236,6 +260,46 @@ function getSkillsHtml(skillsValue) {
 }
 
 
+function getProfileTimestamp(profile) {
+
+    const timestamp =
+        profile.createdAt;
+
+    if (
+        timestamp &&
+        typeof timestamp.toMillis === "function"
+    ) {
+        return timestamp.toMillis();
+    }
+
+    if (
+        timestamp &&
+        typeof timestamp.seconds === "number"
+    ) {
+        return timestamp.seconds * 1000;
+    }
+
+    if (timestamp instanceof Date) {
+        return timestamp.getTime();
+    }
+
+    return 0;
+
+}
+
+
+function getProfileExperience(profile) {
+
+    const experience =
+        Number(profile.experience);
+
+    return Number.isFinite(experience)
+        ? experience
+        : 0;
+
+}
+
+
 // ====================================
 // NAVEGACIÓN
 // ====================================
@@ -257,6 +321,10 @@ function showPage(sectionId) {
 
     if (sectionId === "miPerfil") {
         renderMyProfile();
+    }
+
+    if (sectionId === "talentos") {
+        applyFilters();
     }
 
     if (navLinks) {
@@ -448,6 +516,19 @@ if (loginBtn) {
 
                 }
 
+                if (
+                    error.code ===
+                    "auth/popup-blocked"
+                ) {
+
+                    alert(
+                        "El navegador bloqueó la ventana de Google. Habilita las ventanas emergentes."
+                    );
+
+                    return;
+
+                }
+
                 alert(
                     "No se pudo iniciar sesión con Google."
                 );
@@ -570,11 +651,11 @@ async function loadProfiles() {
 
         updateStatistics();
 
-        renderProfiles(allProfiles);
-
         updateProfileMenu();
 
         renderMyProfile();
+
+        applyFilters();
 
     } catch (error) {
 
@@ -651,8 +732,14 @@ function updateStatistics() {
 
     if (opportunitiesCount) {
 
+        const availableProfiles =
+            allProfiles.filter(profile =>
+                profile.status !==
+                "No disponible"
+            ).length;
+
         opportunitiesCount.textContent =
-            `${totalProfiles}+`;
+            availableProfiles;
 
     }
 
@@ -675,7 +762,7 @@ function renderProfiles(profiles) {
 
         profilesContainer.innerHTML = `
             <p class="empty-state">
-                No se encontraron perfiles.
+                No se encontraron perfiles con los filtros seleccionados.
             </p>
         `;
 
@@ -688,6 +775,10 @@ function renderProfiles(profiles) {
         const status =
             profile.status || "Disponible";
 
+        const seniority =
+            profile.seniority ||
+            "Sin especificar";
+
         const skillsHtml =
             getSkillsHtml(profile.skills);
 
@@ -696,7 +787,10 @@ function renderProfiles(profiles) {
 
         const visibleSummary =
             shortSummary.length > 110
-                ? shortSummary.substring(0, 110) + "..."
+                ? shortSummary.substring(
+                    0,
+                    110
+                ) + "..."
                 : shortSummary;
 
         profilesContainer.insertAdjacentHTML(
@@ -707,6 +801,7 @@ function renderProfiles(profiles) {
                 <div class="profile-header">
 
                     <div class="avatar">
+
                         ${escapeHtml(
                             String(
                                 profile.name || "T"
@@ -714,6 +809,7 @@ function renderProfiles(profiles) {
                                 .charAt(0)
                                 .toUpperCase()
                         )}
+
                     </div>
 
                     <div class="profile-title-block">
@@ -734,7 +830,15 @@ function renderProfiles(profiles) {
 
                             <span
                                 class="status-badge status-${getStatusClass(status)}">
+
                                 ${escapeHtml(status)}
+
+                            </span>
+
+                            <span class="seniority-badge">
+
+                                ${escapeHtml(seniority)}
+
                             </span>
 
                         </div>
@@ -747,6 +851,7 @@ function renderProfiles(profiles) {
 
                     <p>
                         <strong>País:</strong>
+
                         ${escapeHtml(
                             profile.country || ""
                         )}
@@ -754,6 +859,7 @@ function renderProfiles(profiles) {
 
                     <p>
                         <strong>Puesto:</strong>
+
                         ${escapeHtml(
                             profile.position || ""
                         )}
@@ -761,6 +867,7 @@ function renderProfiles(profiles) {
 
                     <p>
                         <strong>Ubicación:</strong>
+
                         ${escapeHtml(
                             profile.location || ""
                         )}
@@ -768,11 +875,20 @@ function renderProfiles(profiles) {
 
                     <p>
                         <strong>Experiencia:</strong>
+
                         ${escapeHtml(
                             String(
-                                profile.experience || 0
+                                getProfileExperience(
+                                    profile
+                                )
                             )
                         )} años
+                    </p>
+
+                    <p>
+                        <strong>Seniority:</strong>
+
+                        ${escapeHtml(seniority)}
                     </p>
 
                 </div>
@@ -794,7 +910,9 @@ function renderProfiles(profiles) {
                         target="_blank"
                         rel="noopener noreferrer"
                         class="linkedin-btn">
+
                         🔗 LinkedIn
+
                     </a>
 
                 </div>
@@ -836,7 +954,9 @@ function renderMyProfile() {
                     type="button"
                     class="primary-action"
                     id="myProfileLoginBtn">
-                    Iniciar sesión
+
+                    Continuar con Google
+
                 </button>
 
             </div>
@@ -877,7 +997,9 @@ function renderMyProfile() {
                     type="button"
                     class="primary-action"
                     id="createMyProfileBtn">
+
                     Sumar mi perfil
+
                 </button>
 
             </div>
@@ -900,6 +1022,10 @@ function renderMyProfile() {
     const status =
         myProfile.status || "Disponible";
 
+    const seniority =
+        myProfile.seniority ||
+        "Sin especificar";
+
     const skillsHtml =
         getSkillsHtml(myProfile.skills);
 
@@ -909,6 +1035,7 @@ function renderMyProfile() {
             <div class="profile-header">
 
                 <div class="avatar">
+
                     ${escapeHtml(
                         String(
                             myProfile.name || "T"
@@ -916,6 +1043,7 @@ function renderMyProfile() {
                             .charAt(0)
                             .toUpperCase()
                     )}
+
                 </div>
 
                 <div class="profile-title-block">
@@ -929,14 +1057,24 @@ function renderMyProfile() {
                     <div class="profile-badges">
 
                         <span class="area-badge">
+
                             ${escapeHtml(
                                 myProfile.area || ""
                             )}
+
                         </span>
 
                         <span
                             class="status-badge status-${getStatusClass(status)}">
+
                             ${escapeHtml(status)}
+
+                        </span>
+
+                        <span class="seniority-badge">
+
+                            ${escapeHtml(seniority)}
+
                         </span>
 
                     </div>
@@ -949,6 +1087,7 @@ function renderMyProfile() {
 
                 <p>
                     <strong>Puesto:</strong>
+
                     ${escapeHtml(
                         myProfile.position || ""
                     )}
@@ -956,6 +1095,7 @@ function renderMyProfile() {
 
                 <p>
                     <strong>País:</strong>
+
                     ${escapeHtml(
                         myProfile.country || ""
                     )}
@@ -963,6 +1103,7 @@ function renderMyProfile() {
 
                 <p>
                     <strong>Ubicación:</strong>
+
                     ${escapeHtml(
                         myProfile.location || ""
                     )}
@@ -970,19 +1111,30 @@ function renderMyProfile() {
 
                 <p>
                     <strong>Experiencia:</strong>
+
                     ${escapeHtml(
                         String(
-                            myProfile.experience || 0
+                            getProfileExperience(
+                                myProfile
+                            )
                         )
                     )} años
+                </p>
+
+                <p>
+                    <strong>Seniority:</strong>
+
+                    ${escapeHtml(seniority)}
                 </p>
 
             </div>
 
             <p class="profile-summary">
+
                 ${escapeHtml(
                     myProfile.summary || ""
                 )}
+
             </p>
 
             <div class="skills-container">
@@ -995,7 +1147,9 @@ function renderMyProfile() {
                     type="button"
                     class="edit-profile-btn"
                     id="editMyProfileBtn">
+
                     ✏️ Editar perfil
+
                 </button>
 
                 <a
@@ -1005,7 +1159,9 @@ function renderMyProfile() {
                     target="_blank"
                     rel="noopener noreferrer"
                     class="linkedin-btn">
+
                     🔗 LinkedIn
+
                 </a>
 
             </div>
@@ -1069,7 +1225,9 @@ if (profileForm) {
             const linkedin =
                 normalizeLinkedInUrl(
                     document
-                        .getElementById("linkedin")
+                        .getElementById(
+                            "linkedin"
+                        )
                         .value
                 );
 
@@ -1077,6 +1235,29 @@ if (profileForm) {
 
                 alert(
                     "Introduce un enlace de LinkedIn válido."
+                );
+
+                return;
+
+            }
+
+            const experience =
+                Number(
+                    document
+                        .getElementById(
+                            "experience"
+                        )
+                        .value
+                );
+
+            if (
+                !Number.isFinite(experience) ||
+                experience < 0 ||
+                experience > 80
+            ) {
+
+                alert(
+                    "Introduce una cantidad válida de años de experiencia."
                 );
 
                 return;
@@ -1105,9 +1286,18 @@ if (profileForm) {
                         .getElementById("status")
                         .value,
 
+                seniority:
+                    document
+                        .getElementById(
+                            "seniority"
+                        )
+                        .value,
+
                 country:
                     document
-                        .getElementById("country")
+                        .getElementById(
+                            "country"
+                        )
                         .value,
 
                 area:
@@ -1117,35 +1307,39 @@ if (profileForm) {
 
                 position:
                     document
-                        .getElementById("position")
+                        .getElementById(
+                            "position"
+                        )
                         .value
                         .trim(),
 
                 location:
                     document
-                        .getElementById("location")
+                        .getElementById(
+                            "location"
+                        )
                         .value
                         .trim(),
 
                 experience:
-                    Number(
-                        document
-                            .getElementById("experience")
-                            .value
-                    ),
+                    experience,
 
                 linkedin:
                     linkedin,
 
                 summary:
                     document
-                        .getElementById("summary")
+                        .getElementById(
+                            "summary"
+                        )
                         .value
                         .trim(),
 
                 skills:
                     document
-                        .getElementById("skills")
+                        .getElementById(
+                            "skills"
+                        )
                         .value
                         .trim(),
 
@@ -1204,6 +1398,7 @@ if (profileForm) {
                         ),
                         {
                             ...profileData,
+
                             createdAt:
                                 new Date()
                         }
@@ -1283,6 +1478,9 @@ function editProfile(profileId) {
     document.getElementById("status").value =
         profile.status || "Disponible";
 
+    document.getElementById("seniority").value =
+        profile.seniority || "";
+
     document.getElementById("country").value =
         profile.country || "";
 
@@ -1296,7 +1494,7 @@ function editProfile(profileId) {
         profile.location || "";
 
     document.getElementById("experience").value =
-        profile.experience || "";
+        getProfileExperience(profile);
 
     document.getElementById("linkedin").value =
         profile.linkedin || "";
@@ -1308,17 +1506,23 @@ function editProfile(profileId) {
         profile.skills || "";
 
     if (profileFormTitle) {
+
         profileFormTitle.textContent =
             "Editar mi perfil";
+
     }
 
     if (profileSubmitBtn) {
+
         profileSubmitBtn.textContent =
             "Guardar cambios";
+
     }
 
     if (cancelEditBtn) {
+
         cancelEditBtn.hidden = false;
+
     }
 
     showPage("perfil");
@@ -1346,17 +1550,23 @@ function resetProfileForm() {
     }
 
     if (profileFormTitle) {
+
         profileFormTitle.textContent =
             "Sumar mi perfil";
+
     }
 
     if (profileSubmitBtn) {
+
         profileSubmitBtn.textContent =
             "Publicar perfil";
+
     }
 
     if (cancelEditBtn) {
+
         cancelEditBtn.hidden = true;
+
     }
 
 }
@@ -1383,8 +1593,118 @@ if (cancelEditBtn) {
 
 
 // ====================================
-// FILTROS
+// FILTROS AVANZADOS
 // ====================================
+
+function matchesExperienceFilter(
+    experience,
+    filterValue
+) {
+
+    if (filterValue === "all") {
+        return true;
+    }
+
+    if (filterValue === "0-2") {
+        return experience >= 0 &&
+            experience <= 2;
+    }
+
+    if (filterValue === "3-5") {
+        return experience >= 3 &&
+            experience <= 5;
+    }
+
+    if (filterValue === "6-10") {
+        return experience >= 6 &&
+            experience <= 10;
+    }
+
+    if (filterValue === "11+") {
+        return experience >= 11;
+    }
+
+    return true;
+
+}
+
+
+function sortProfiles(
+    profiles,
+    sortValue
+) {
+
+    const sortedProfiles =
+        [...profiles];
+
+    if (sortValue === "experience-desc") {
+
+        sortedProfiles.sort(
+            (profileA, profileB) =>
+                getProfileExperience(profileB) -
+                getProfileExperience(profileA)
+        );
+
+    } else if (
+        sortValue === "experience-asc"
+    ) {
+
+        sortedProfiles.sort(
+            (profileA, profileB) =>
+                getProfileExperience(profileA) -
+                getProfileExperience(profileB)
+        );
+
+    } else if (
+        sortValue === "name-asc"
+    ) {
+
+        sortedProfiles.sort(
+            (profileA, profileB) =>
+                String(profileA.name || "")
+                    .localeCompare(
+                        String(
+                            profileB.name || ""
+                        ),
+                        "es",
+                        {
+                            sensitivity: "base"
+                        }
+                    )
+        );
+
+    } else if (
+        sortValue === "name-desc"
+    ) {
+
+        sortedProfiles.sort(
+            (profileA, profileB) =>
+                String(profileB.name || "")
+                    .localeCompare(
+                        String(
+                            profileA.name || ""
+                        ),
+                        "es",
+                        {
+                            sensitivity: "base"
+                        }
+                    )
+        );
+
+    } else {
+
+        sortedProfiles.sort(
+            (profileA, profileB) =>
+                getProfileTimestamp(profileB) -
+                getProfileTimestamp(profileA)
+        );
+
+    }
+
+    return sortedProfiles;
+
+}
+
 
 function applyFilters() {
 
@@ -1399,7 +1719,19 @@ function applyFilters() {
     const selectedCountry =
         countryFilter?.value || "all";
 
-    const filteredProfiles =
+    const selectedStatus =
+        statusFilter?.value || "all";
+
+    const selectedExperience =
+        experienceFilter?.value || "all";
+
+    const selectedSeniority =
+        seniorityFilter?.value || "all";
+
+    const selectedSort =
+        sortFilter?.value || "recent";
+
+    let filteredProfiles =
         allProfiles.filter(profile => {
 
             const searchableText = [
@@ -1408,35 +1740,326 @@ function applyFilters() {
                 profile.skills,
                 profile.location,
                 profile.area,
-                profile.country
+                profile.country,
+                profile.status,
+                profile.seniority,
+                profile.summary
             ]
                 .map(normalizeText)
                 .join(" ");
 
             const matchesSearch =
+                !search ||
                 searchableText.includes(search);
 
             const matchesArea =
                 selectedArea === "all" ||
-                profile.area === selectedArea;
+                profile.area ===
+                    selectedArea;
 
             const matchesCountry =
                 selectedCountry === "all" ||
                 profile.country ===
                     selectedCountry;
 
+            const matchesStatus =
+                selectedStatus === "all" ||
+                (
+                    profile.status ||
+                    "Disponible"
+                ) === selectedStatus;
+
+            const matchesExperience =
+                matchesExperienceFilter(
+                    getProfileExperience(
+                        profile
+                    ),
+                    selectedExperience
+                );
+
+            const profileSeniority =
+                profile.seniority || "";
+
+            const matchesSeniority =
+                selectedSeniority === "all" ||
+                profileSeniority ===
+                    selectedSeniority;
+
             return (
                 matchesSearch &&
                 matchesArea &&
-                matchesCountry
+                matchesCountry &&
+                matchesStatus &&
+                matchesExperience &&
+                matchesSeniority
             );
 
         });
 
+    filteredProfiles =
+        sortProfiles(
+            filteredProfiles,
+            selectedSort
+        );
+
+    if (filteredTalentCount) {
+
+        filteredTalentCount.textContent =
+            filteredProfiles.length;
+
+    }
+
     renderProfiles(filteredProfiles);
+
+    renderActiveFilters();
 
 }
 
+
+// ====================================
+// ETIQUETAS DE FILTROS ACTIVOS
+// ====================================
+
+function renderActiveFilters() {
+
+    if (!activeFilters) {
+        return;
+    }
+
+    const filters = [];
+
+    const search =
+        searchInput?.value.trim();
+
+    if (search) {
+
+        filters.push({
+            label: `Búsqueda: ${search}`,
+            filter: "search"
+        });
+
+    }
+
+    if (
+        areaFilter &&
+        areaFilter.value !== "all"
+    ) {
+
+        filters.push({
+            label:
+                `Área: ${
+                    areaFilter.options[
+                        areaFilter.selectedIndex
+                    ].text
+                }`,
+            filter: "area"
+        });
+
+    }
+
+    if (
+        countryFilter &&
+        countryFilter.value !== "all"
+    ) {
+
+        filters.push({
+            label:
+                `País: ${
+                    countryFilter.options[
+                        countryFilter.selectedIndex
+                    ].text
+                }`,
+            filter: "country"
+        });
+
+    }
+
+    if (
+        statusFilter &&
+        statusFilter.value !== "all"
+    ) {
+
+        filters.push({
+            label:
+                statusFilter.options[
+                    statusFilter.selectedIndex
+                ].text,
+            filter: "status"
+        });
+
+    }
+
+    if (
+        experienceFilter &&
+        experienceFilter.value !== "all"
+    ) {
+
+        filters.push({
+            label:
+                `Experiencia: ${
+                    experienceFilter.options[
+                        experienceFilter.selectedIndex
+                    ].text
+                }`,
+            filter: "experience"
+        });
+
+    }
+
+    if (
+        seniorityFilter &&
+        seniorityFilter.value !== "all"
+    ) {
+
+        filters.push({
+            label:
+                `Seniority: ${
+                    seniorityFilter.options[
+                        seniorityFilter.selectedIndex
+                    ].text
+                }`,
+            filter: "seniority"
+        });
+
+    }
+
+    activeFilters.innerHTML =
+        filters
+            .map(filter => `
+                <button
+                    type="button"
+                    class="active-filter-tag"
+                    data-filter="${filter.filter}">
+
+                    ${escapeHtml(filter.label)}
+
+                    <span aria-hidden="true">
+                        ×
+                    </span>
+
+                </button>
+            `)
+            .join("");
+
+}
+
+
+// ====================================
+// QUITAR UN FILTRO ACTIVO
+// ====================================
+
+activeFilters?.addEventListener(
+    "click",
+    event => {
+
+        const filterButton =
+            event.target.closest(
+                ".active-filter-tag"
+            );
+
+        if (!filterButton) {
+            return;
+        }
+
+        const filterName =
+            filterButton.dataset.filter;
+
+        if (
+            filterName === "search" &&
+            searchInput
+        ) {
+            searchInput.value = "";
+        }
+
+        if (
+            filterName === "area" &&
+            areaFilter
+        ) {
+            areaFilter.value = "all";
+        }
+
+        if (
+            filterName === "country" &&
+            countryFilter
+        ) {
+            countryFilter.value = "all";
+        }
+
+        if (
+            filterName === "status" &&
+            statusFilter
+        ) {
+            statusFilter.value = "all";
+        }
+
+        if (
+            filterName === "experience" &&
+            experienceFilter
+        ) {
+            experienceFilter.value = "all";
+        }
+
+        if (
+            filterName === "seniority" &&
+            seniorityFilter
+        ) {
+            seniorityFilter.value = "all";
+        }
+
+        applyFilters();
+
+    }
+);
+
+
+// ====================================
+// LIMPIAR TODOS LOS FILTROS
+// ====================================
+
+function clearFilters() {
+
+    if (searchInput) {
+        searchInput.value = "";
+    }
+
+    if (areaFilter) {
+        areaFilter.value = "all";
+    }
+
+    if (countryFilter) {
+        countryFilter.value = "all";
+    }
+
+    if (statusFilter) {
+        statusFilter.value = "all";
+    }
+
+    if (experienceFilter) {
+        experienceFilter.value = "all";
+    }
+
+    if (seniorityFilter) {
+        seniorityFilter.value = "all";
+    }
+
+    if (sortFilter) {
+        sortFilter.value = "recent";
+    }
+
+    applyFilters();
+
+}
+
+
+clearFiltersBtn?.addEventListener(
+    "click",
+    clearFilters
+);
+
+
+// ====================================
+// EVENTOS DE LOS FILTROS
+// ====================================
 
 searchInput?.addEventListener(
     "input",
@@ -1449,6 +2072,26 @@ areaFilter?.addEventListener(
 );
 
 countryFilter?.addEventListener(
+    "change",
+    applyFilters
+);
+
+statusFilter?.addEventListener(
+    "change",
+    applyFilters
+);
+
+experienceFilter?.addEventListener(
+    "change",
+    applyFilters
+);
+
+seniorityFilter?.addEventListener(
+    "change",
+    applyFilters
+);
+
+sortFilter?.addEventListener(
     "change",
     applyFilters
 );

@@ -1907,3 +1907,249 @@ body.dark::-webkit-scrollbar-track {
     }
 
 }
+/* ====================================
+   FILTROS AVANZADOS - TALENTO ARPY V2
+==================================== */
+
+.search-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 22px;
+}
+
+.search-header > div {
+    min-width: 0;
+}
+
+.search-header .section-description {
+    margin-bottom: 0;
+}
+
+.clear-filters-btn {
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 10px 17px;
+    border: 2px solid rgba(124, 58, 237, 0.16);
+    border-radius: 14px;
+    color: var(--primary);
+    background: rgba(124, 58, 237, 0.06);
+    font-size: 0.84rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.clear-filters-btn:hover {
+    transform: translateY(-2px);
+    background: rgba(124, 58, 237, 0.12);
+    box-shadow: 0 8px 18px rgba(124, 58, 237, 0.12);
+}
+
+.results-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 4px 0 18px;
+    padding: 14px 16px;
+    border: 1px solid rgba(124, 58, 237, 0.08);
+    border-radius: 16px;
+    background: rgba(124, 58, 237, 0.045);
+}
+
+.results-summary .talent-counter {
+    margin: 0;
+}
+
+.total-counter {
+    color: var(--muted);
+    font-size: 0.88rem;
+    font-weight: 650;
+}
+
+.total-counter span {
+    color: var(--primary);
+    font-weight: 800;
+}
+
+.search-box {
+    position: relative;
+    margin-bottom: 16px;
+}
+
+.search-box::before {
+    content: "⌕";
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary);
+    font-size: 1.35rem;
+    pointer-events: none;
+}
+
+.search-box input {
+    padding-left: 46px;
+}
+
+.advanced-filters {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 15px;
+    margin-top: 8px;
+}
+
+.advanced-filters .filter-field {
+    min-width: 0;
+}
+
+.advanced-filters label {
+    display: block;
+    margin: 0 0 7px 2px;
+    color: var(--dark);
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.advanced-filters select {
+    min-height: 48px;
+}
+
+.active-filters {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-height: 0;
+    margin-top: 16px;
+}
+
+.active-filters:empty {
+    display: none;
+}
+
+.active-filter-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 11px;
+    border: 1px solid rgba(124, 58, 237, 0.18);
+    border-radius: 999px;
+    color: var(--primary);
+    background: rgba(124, 58, 237, 0.08);
+    font-size: 0.76rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.active-filter-tag span {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.active-filter-tag:hover {
+    transform: translateY(-1px);
+    background: rgba(124, 58, 237, 0.15);
+}
+
+/* ====================================
+   BADGE DE SENIORITY
+==================================== */
+
+.seniority-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 27px;
+    padding: 5px 11px;
+    border: 1px solid rgba(6, 182, 212, 0.2);
+    border-radius: 999px;
+    color: #0e7490;
+    background: rgba(6, 182, 212, 0.1);
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+/* ====================================
+   FILTROS AVANZADOS - MODO OSCURO
+==================================== */
+
+body.dark .results-summary {
+    border-color: rgba(196, 181, 253, 0.12);
+    background: rgba(124, 58, 237, 0.11);
+}
+
+body.dark .clear-filters-btn,
+body.dark .active-filter-tag {
+    color: #c4b5fd;
+    border-color: rgba(196, 181, 253, 0.18);
+    background: rgba(124, 58, 237, 0.15);
+}
+
+body.dark .clear-filters-btn:hover,
+body.dark .active-filter-tag:hover {
+    background: rgba(124, 58, 237, 0.24);
+}
+
+body.dark .seniority-badge {
+    color: #67e8f9;
+    border-color: rgba(103, 232, 249, 0.18);
+    background: rgba(8, 145, 178, 0.2);
+}
+
+/* ====================================
+   FILTROS AVANZADOS - RESPONSIVE
+==================================== */
+
+@media (max-width: 1050px) {
+    .advanced-filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .search-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+    }
+
+    .clear-filters-btn {
+        width: 100%;
+    }
+
+    .results-summary {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .advanced-filters {
+        grid-template-columns: 1fr;
+    }
+
+    .active-filters {
+        gap: 7px;
+    }
+
+    .active-filter-tag {
+        max-width: 100%;
+        overflow-wrap: anywhere;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-box::before {
+        left: 13px;
+    }
+
+    .search-box input {
+        padding-left: 40px;
+    }
+
+    .results-summary {
+        padding: 12px 13px;
+    }
+}
