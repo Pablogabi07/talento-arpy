@@ -58,6 +58,8 @@ let allProfiles = [];
 
 let editingProfileId = null;
 
+let sharedProfileId = null;
+
 
 // ====================================
 // ELEMENTOS DEL HTML
@@ -86,6 +88,21 @@ const profilesContainer =
 
 const myProfileContainer =
     document.getElementById("myProfileContainer");
+
+const sharedProfileContainer =
+    document.getElementById("sharedProfileContainer");
+
+const backFromSharedProfileBtn =
+    document.getElementById("backFromSharedProfileBtn");
+
+const copySharedProfileBtn =
+    document.getElementById("copySharedProfileBtn");
+
+const nativeShareProfileBtn =
+    document.getElementById("nativeShareProfileBtn");
+
+const shareProfileFeedback =
+    document.getElementById("shareProfileFeedback");
 
 const searchInput =
     document.getElementById("searchInput");
@@ -300,6 +317,74 @@ function getProfileExperience(profile) {
 }
 
 
+function getSharedProfileUrl(profileId) {
+
+    const url = new URL(window.location.href);
+
+    url.searchParams.set("perfil", profileId);
+    url.hash = "";
+
+    return url.toString();
+
+}
+
+
+function getProfileById(profileId) {
+
+    return allProfiles.find(
+        profile => profile.id === profileId
+    ) || null;
+
+}
+
+
+function setShareFeedback(message) {
+
+    if (!shareProfileFeedback) {
+        return;
+    }
+
+    shareProfileFeedback.textContent = message;
+
+    window.setTimeout(() => {
+        if (shareProfileFeedback.textContent === message) {
+            shareProfileFeedback.textContent = "";
+        }
+    }, 3000);
+
+}
+
+
+async function copyTextToClipboard(value) {
+
+    if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(value);
+        return;
+    }
+
+    const temporaryTextarea =
+        document.createElement("textarea");
+
+    temporaryTextarea.value = value;
+    temporaryTextarea.setAttribute("readonly", "");
+    temporaryTextarea.style.position = "fixed";
+    temporaryTextarea.style.opacity = "0";
+
+    document.body.appendChild(temporaryTextarea);
+    temporaryTextarea.select();
+
+    const copied =
+        document.execCommand("copy");
+
+    temporaryTextarea.remove();
+
+    if (!copied) {
+        throw new Error("No se pudo copiar el enlace.");
+    }
+
+}
+
+
 // ====================================
 // NAVEGACIÓN
 // ====================================
@@ -318,6 +403,19 @@ function showPage(sectionId) {
     });
 
     targetPage.classList.add("active-page");
+
+    if (sectionId !== "perfilCompartido") {
+
+        const url = new URL(window.location.href);
+
+        if (url.searchParams.has("perfil")) {
+            url.searchParams.delete("perfil");
+            window.history.replaceState({}, "", url);
+        }
+
+        document.title = "Talento ArPy";
+
+    }
 
     if (sectionId === "miPerfil") {
         renderMyProfile();
@@ -657,6 +755,8 @@ async function loadProfiles() {
 
         applyFilters();
 
+        openProfileFromCurrentUrl();
+
     } catch (error) {
 
         console.error(
@@ -917,6 +1017,29 @@ function renderProfiles(profiles) {
 
                 </div>
 
+                <div class="profile-share-actions">
+
+                    <button
+                        type="button"
+                        class="view-profile-btn"
+                        data-profile-id="${escapeHtml(profile.id)}">
+
+                        Ver perfil completo
+
+                    </button>
+
+                    <button
+                        type="button"
+                        class="quick-share-profile-btn"
+                        data-profile-id="${escapeHtml(profile.id)}"
+                        aria-label="Compartir perfil de ${escapeHtml(profile.name || "talento")}">
+
+                        🔗 Compartir
+
+                    </button>
+
+                </div>
+
             </article>
             `
         );
@@ -1164,6 +1287,15 @@ function renderMyProfile() {
 
                 </a>
 
+                <button
+                    type="button"
+                    class="share-profile-btn"
+                    id="shareMyProfileBtn">
+
+                    📤 Compartir mi perfil
+
+                </button>
+
             </div>
 
         </article>
@@ -1179,7 +1311,356 @@ function renderMyProfile() {
         () => editProfile(myProfile.id)
     );
 
+    const shareMyProfileBtn =
+        document.getElementById("shareMyProfileBtn");
+
+    shareMyProfileBtn?.addEventListener(
+        "click",
+        () => shareProfile(myProfile.id)
+    );
+
 }
+
+
+// ====================================
+// PERFIL INDIVIDUAL COMPARTIBLE
+// ====================================
+
+function renderSharedProfile(profile) {
+
+    if (!sharedProfileContainer) {
+        return;
+    }
+
+    if (!profile) {
+
+        sharedProfileId = null;
+
+        sharedProfileContainer.innerHTML = `
+            <div class="empty-profile">
+                <h3>Perfil no encontrado</h3>
+                <p>
+                    El enlace puede ser incorrecto o el perfil ya no está disponible.
+                </p>
+            </div>
+        `;
+
+        if (copySharedProfileBtn) {
+            copySharedProfileBtn.disabled = true;
+        }
+
+        if (nativeShareProfileBtn) {
+            nativeShareProfileBtn.disabled = true;
+        }
+
+        document.title = "Perfil no encontrado | Talento ArPy";
+
+        return;
+
+    }
+
+    sharedProfileId = profile.id;
+
+    const status =
+        profile.status || "Disponible";
+
+    const seniority =
+        profile.seniority || "Sin especificar";
+
+    const skillsHtml =
+        getSkillsHtml(profile.skills);
+
+    sharedProfileContainer.innerHTML = `
+        <article class="shared-profile-card">
+
+            <div class="shared-profile-identity">
+
+                <div class="avatar shared-profile-avatar">
+                    ${escapeHtml(
+                        String(profile.name || "T")
+                            .charAt(0)
+                            .toUpperCase()
+                    )}
+                </div>
+
+                <div>
+                    <span class="section-kicker">Perfil profesional</span>
+
+                    <h1>
+                        ${escapeHtml(profile.name || "")}
+                    </h1>
+
+                    <p class="shared-profile-position">
+                        ${escapeHtml(profile.position || "")}
+                    </p>
+
+                    <div class="profile-badges">
+                        <span class="area-badge">
+                            ${escapeHtml(profile.area || "")}
+                        </span>
+
+                        <span class="status-badge status-${getStatusClass(status)}">
+                            ${escapeHtml(status)}
+                        </span>
+
+                        <span class="seniority-badge">
+                            ${escapeHtml(seniority)}
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="shared-profile-details">
+                <div>
+                    <span>País</span>
+                    <strong>${escapeHtml(profile.country || "")}</strong>
+                </div>
+
+                <div>
+                    <span>Ubicación</span>
+                    <strong>${escapeHtml(profile.location || "")}</strong>
+                </div>
+
+                <div>
+                    <span>Experiencia</span>
+                    <strong>${escapeHtml(String(getProfileExperience(profile)))} años</strong>
+                </div>
+
+                <div>
+                    <span>Seniority</span>
+                    <strong>${escapeHtml(seniority)}</strong>
+                </div>
+            </div>
+
+            <section class="shared-profile-content">
+                <h2>Resumen profesional</h2>
+                <p>${escapeHtml(profile.summary || "")}</p>
+            </section>
+
+            <section class="shared-profile-content">
+                <h2>Habilidades</h2>
+                <div class="skills-container">
+                    ${skillsHtml}
+                </div>
+            </section>
+
+            <div class="shared-profile-contact">
+                <a
+                    href="${safeLinkedInUrl(profile.linkedin)}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="linkedin-btn">
+                    🔗 Ver LinkedIn
+                </a>
+            </div>
+
+        </article>
+    `;
+
+    if (copySharedProfileBtn) {
+        copySharedProfileBtn.disabled = false;
+    }
+
+    if (nativeShareProfileBtn) {
+        nativeShareProfileBtn.disabled = false;
+        nativeShareProfileBtn.hidden =
+            typeof navigator.share !== "function";
+    }
+
+    document.title =
+        `${profile.name || "Perfil"} | Talento ArPy`;
+
+}
+
+
+function openSharedProfile(
+    profileId,
+    updateHistory = true
+) {
+
+    const profile =
+        getProfileById(profileId);
+
+    if (updateHistory) {
+        window.history.pushState(
+            { profileId },
+            "",
+            getSharedProfileUrl(profileId)
+        );
+    }
+
+    renderSharedProfile(profile);
+
+    pages.forEach(page => {
+        page.classList.remove("active-page");
+    });
+
+    document
+        .getElementById("perfilCompartido")
+        ?.classList.add("active-page");
+
+    if (navLinks) {
+        navLinks.classList.remove("active-menu");
+    }
+
+    if (menuToggle) {
+        menuToggle.textContent = "☰";
+        menuToggle.setAttribute("aria-expanded", "false");
+    }
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+}
+
+
+function openProfileFromCurrentUrl() {
+
+    const profileId =
+        new URL(window.location.href)
+            .searchParams
+            .get("perfil");
+
+    if (!profileId) {
+        return;
+    }
+
+    openSharedProfile(profileId, false);
+
+}
+
+
+async function shareProfile(profileId) {
+
+    const profile =
+        getProfileById(profileId);
+
+    if (!profile) {
+        alert("No se encontró el perfil.");
+        return;
+    }
+
+    const url =
+        getSharedProfileUrl(profileId);
+
+    const shareData = {
+        title: `${profile.name || "Talento"} | Talento ArPy`,
+        text: `${profile.name || "Talento"} - ${profile.position || "Perfil profesional"}`,
+        url
+    };
+
+    if (typeof navigator.share === "function") {
+        try {
+            await navigator.share(shareData);
+            return;
+        } catch (error) {
+            if (error.name === "AbortError") {
+                return;
+            }
+        }
+    }
+
+    try {
+        await copyTextToClipboard(url);
+        setShareFeedback("Enlace copiado al portapapeles.");
+    } catch (error) {
+        console.error("No se pudo compartir el perfil:", error);
+        alert("No se pudo copiar el enlace del perfil.");
+    }
+
+}
+
+
+profilesContainer?.addEventListener(
+    "click",
+    event => {
+
+        const viewButton =
+            event.target.closest(".view-profile-btn");
+
+        if (viewButton) {
+            openSharedProfile(
+                viewButton.dataset.profileId
+            );
+            return;
+        }
+
+        const shareButton =
+            event.target.closest(
+                ".quick-share-profile-btn"
+            );
+
+        if (shareButton) {
+            shareProfile(
+                shareButton.dataset.profileId
+            );
+        }
+
+    }
+);
+
+
+backFromSharedProfileBtn?.addEventListener(
+    "click",
+    () => showPage("talentos")
+);
+
+
+copySharedProfileBtn?.addEventListener(
+    "click",
+    async () => {
+
+        if (!sharedProfileId) {
+            return;
+        }
+
+        try {
+            await copyTextToClipboard(
+                getSharedProfileUrl(sharedProfileId)
+            );
+
+            setShareFeedback(
+                "Enlace copiado al portapapeles."
+            );
+        } catch (error) {
+            console.error("No se pudo copiar el enlace:", error);
+            setShareFeedback("No se pudo copiar el enlace.");
+        }
+
+    }
+);
+
+
+nativeShareProfileBtn?.addEventListener(
+    "click",
+    () => {
+        if (sharedProfileId) {
+            shareProfile(sharedProfileId);
+        }
+    }
+);
+
+
+window.addEventListener(
+    "popstate",
+    () => {
+
+        const profileId =
+            new URL(window.location.href)
+                .searchParams
+                .get("perfil");
+
+        if (profileId) {
+            openSharedProfile(profileId, false);
+        } else {
+            showPage("talentos");
+        }
+
+    }
+);
 
 
 // ====================================

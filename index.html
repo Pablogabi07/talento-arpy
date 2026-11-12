@@ -33,6 +33,16 @@
 
     <title>Talento ArPy</title>
 
+    <!-- Vista previa al compartir Talento ArPy -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Talento ArPy">
+    <meta property="og:description" content="Descubre talento y conecta con nuevas oportunidades profesionales.">
+    <meta property="og:image" content="assets/favicon.svg.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Talento ArPy">
+    <meta name="twitter:description" content="Descubre talento y conecta con nuevas oportunidades profesionales.">
+    <meta name="twitter:image" content="assets/favicon.svg.png">
+
     <link
         rel="preconnect"
         href="https://fonts.googleapis.com">
@@ -975,6 +985,73 @@
 
     </section>
 
+
+
+    <!-- =================================
+         PERFIL INDIVIDUAL COMPARTIBLE
+    ================================== -->
+
+    <section
+        id="perfilCompartido"
+        class="page">
+
+        <main>
+
+            <section class="shared-profile-section">
+
+                <div class="shared-profile-toolbar">
+
+                    <button
+                        type="button"
+                        id="backFromSharedProfileBtn"
+                        class="secondary-action">
+                        ← Volver a talentos
+                    </button>
+
+                    <div class="shared-profile-actions">
+
+                        <button
+                            type="button"
+                            id="copySharedProfileBtn"
+                            class="share-profile-btn"
+                            disabled>
+                            🔗 Copiar enlace
+                        </button>
+
+                        <button
+                            type="button"
+                            id="nativeShareProfileBtn"
+                            class="share-profile-btn"
+                            disabled>
+                            📤 Compartir perfil
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div
+                    id="sharedProfileContainer"
+                    aria-live="polite">
+
+                    <div class="loading">
+                        Cargando perfil...
+                    </div>
+
+                </div>
+
+                <p
+                    id="shareProfileFeedback"
+                    class="share-profile-feedback"
+                    role="status"
+                    aria-live="polite">
+                </p>
+
+            </section>
+
+        </main>
+
+    </section>
 
     <!-- =================================
          FOOTER
