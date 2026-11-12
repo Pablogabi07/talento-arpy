@@ -1745,11 +1745,8 @@ body.dark::-webkit-scrollbar-track {
 
     #loginBtn,
     #logoutBtn {
-        max-width: 112px;
-
-        overflow: hidden;
-
-        text-overflow: ellipsis;
+        padding: 8px 10px;
+        font-size: 0.68rem;
     }
 
     .menu-toggle {
@@ -1782,6 +1779,131 @@ body.dark::-webkit-scrollbar-track {
         padding:
             28px
             18px;
+    }
+
+}
+
+/* ====================================
+   AUTENTICACIÓN DENTRO DEL MENÚ MÓVIL
+==================================== */
+
+@media (max-width: 560px) {
+
+    .navbar {
+        grid-template-columns:
+            minmax(0, 1fr)
+            auto;
+
+        grid-template-areas:
+            "logo menu"
+            "auth auth"
+            "links links";
+
+        column-gap: 10px;
+    }
+
+    /* El logo vuelve a tener espacio */
+
+    .logo {
+        grid-area: logo;
+        min-width: 0;
+    }
+
+    .logo-text {
+        max-width: none;
+
+        overflow: visible;
+
+        font-size: 1.05rem;
+
+        white-space: nowrap;
+
+        text-overflow: initial;
+    }
+
+    /* Hamburguesa a la derecha */
+
+    .menu-toggle {
+        grid-area: menu;
+
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        justify-self: end;
+    }
+
+    /* Ocultamos el acceso mientras el menú está cerrado */
+
+    .auth-section {
+        grid-area: auth;
+
+        display: none;
+
+        width: 100%;
+
+        margin-top: 2px;
+    }
+
+    /* Lo mostramos cuando el menú hamburguesa está abierto */
+
+    .navbar:has(.nav-links.active-menu)
+    .auth-section {
+        display: flex;
+
+        justify-content: stretch;
+
+        animation:
+            mobileAuthAppear 0.3s ease;
+    }
+
+    #loginBtn,
+    #logoutBtn {
+        width: 100%;
+        max-width: none;
+
+        min-height: 44px;
+
+        padding: 10px 16px;
+
+        overflow: visible;
+
+        font-size: 0.8rem;
+
+        text-overflow: initial;
+    }
+
+    /* Opciones del menú */
+
+    .nav-links {
+        grid-area: links;
+    }
+
+    .nav-links.active-menu {
+        margin-top: 0;
+    }
+
+}
+
+
+/* Animación del acceso */
+
+@keyframes mobileAuthAppear {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0);
     }
 
 }
